@@ -1,0 +1,145 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--通过namespace来找到指定的sql操作文件-->
+<mapper namespace="userSalary">
+
+    <!--resultType返回值类型  parameterType参数类型  com.club.Po.User表示类型是User类-->
+    <!--查询user表所有的数据,id为UserDaoImp调用 sql语句不能用select * from user，因为在数据库中字段是下划线，java中变量是驼峰-->
+    <select id="selectAllUserSalary" resultType="com.club.Po.UserSalary">
+
+        SELECT
+        user_salary.`id` AS `Id`,
+        user_salary.`user_id` AS `userId`,
+        user_salary.`user_name` AS `userName`,
+        user_salary.`user_role` AS `userRole`,
+        user_salary.`year` AS `year`,
+        user_salary.`month` AS `month`,
+        user_salary.`base_salary` AS `baseSalary`,
+        user_salary.`cqts` AS `cqts`,
+        user_salary.`qqts` AS `qqts`,
+        user_salary.`over_time` AS `overTime`,
+        user_salary.`over_salary` AS `overSalary`,
+        user_salary.`jiangjin` AS `jiangJin`,
+        user_salary.`yf_salary` AS `yfSalary`
+		FROM user_salary
+
+    </select>
+
+    <select id="selectUserSalaryById" parameterType="int" resultType="com.club.Po.UserSalary">
+
+        SELECT
+        user_salary.`id` AS `Id`,
+        user_salary.`user_id` AS `userId`,
+        user_salary.`user_name` AS `userName`,
+        user_salary.`user_role` AS `userRole`,
+        user_salary.`year` AS `year`,
+        user_salary.`month` AS `month`,
+        user_salary.`base_salary` AS `baseSalary`,
+        user_salary.`cqts` AS `cqts`,
+        user_salary.`qqts` AS `qqts`,
+        user_salary.`over_time` AS `overTime`,
+        user_salary.`over_salary` AS `overSalary`,
+        user_salary.`jiangjin` AS `jiangJin`,
+        user_salary.`yf_salary` AS `yfSalary`
+        FROM user_salary
+        WHERE id = #{id}
+
+    </select>
+
+    <!--修改员工信息-->
+    <update id="editUserSalary" parameterType="com.club.Po.User">
+
+        UPDATE user_salary SET year=#{year},month=#{month},base_salary=#{baseSalary},cqts=#{cqts},qqts=#{qqts},over_time=#{overTime},over_salary=#{overSalary},jiangjin=#{jiangJin},yf_salary=#{yfSalary}
+        WHERE id=#{id}
+
+    </update>
+
+    <!--插入员工工资表-->
+    <insert id="insertUserSalary" parameterType="com.club.Po.UserSalary">
+
+        -- 获取插入的id
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+
+        insert into user_salary (user_id, user_name, user_role, year, month, base_salary, cqts, qqts, over_time, over_salary, jiangjin, yf_salary)
+        values (#{userId},#{userName},#{userRole},#{year},#{month},#{baseSalary},#{cqts},#{qqts},#{overTime},#{overSalary},#{jiangJin},#{yfSalary})
+
+    </insert>
+
+    <!--插入财务员工工资表-->
+    <insert id="insertSalaryList" parameterType="com.club.Po.SalaryList">
+
+        -- 获取插入的id
+        <selectKey keyProperty="salary_id" resultType="int" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+
+        insert into salary_list (user_id, user_name, user_role, year, month, base_salary, cqts, qqts, over_time, over_salary, jiangjin, yf_salary)
+        values (#{userId},#{userName},#{userRole},#{year},#{month},#{baseSalary},#{cqts},#{qqts},#{overTime},#{overSalary},#{jiangJin},#{yfSalary})
+
+    </insert>
+
+    <delete id="deleteUserSalary" parameterType="int">
+
+        DELETE FROM user_salary WHERE id = #{id}
+
+    </delete>
+
+    <!--通过工号，年份，月份查找-->
+    <select id="selectUserSalaryByTime" resultType="com.club.Po.UserSalary">
+
+        SELECT
+        user_salary.`id` AS `Id`,
+        user_salary.`user_id` AS `userId`,
+        user_salary.`user_name` AS `userName`,
+        user_salary.`user_role` AS `userRole`,
+        user_salary.`year` AS `year`,
+        user_salary.`month` AS `month`,
+        user_salary.`base_salary` AS `baseSalary`,
+        user_salary.`cqts` AS `cqts`,
+        user_salary.`qqts` AS `qqts`,
+        user_salary.`over_time` AS `overTime`,
+        user_salary.`over_salary` AS `overSalary`,
+        user_salary.`jiangjin` AS `jiangJin`,
+        user_salary.`yf_salary` AS `yfSalary`
+        FROM user_salary
+        WHERE user_id = #{userId}
+        AND year = #{year}
+        AND month=#{month}
+
+    </select>
+
+    <select id="selectUserSalaryByYear" parameterType="String" resultType="com.club.Po.UserSalary">
+
+        SELECT
+        user_salary.`id` AS `Id`,
+        user_salary.`user_id` AS `userId`,
+        user_salary.`user_name` AS `userName`,
+        user_salary.`user_role` AS `userRole`,
+        user_salary.`year` AS `year`,
+        user_salary.`month` AS `month`,
+        user_salary.`base_salary` AS `baseSalary`,
+        user_salary.`cqts` AS `cqts`,
+        user_salary.`qqts` AS `qqts`,
+        user_salary.`over_time` AS `overTime`,
+        user_salary.`over_salary` AS `overSalary`,
+        user_salary.`jiangjin` AS `jiangJin`,
+        user_salary.`yf_salary` AS `yfSalary`
+        FROM user_salary
+        WHERE year = #{year}
+
+    </select>
+
+    <select id="selectYear" resultType="String">
+        select distinct year from user_salary
+    </select>
+
+    <select id="selectNumber" resultType="int">
+        select distinct user_id from user_salary
+    </select>
+
+
+</mapper>

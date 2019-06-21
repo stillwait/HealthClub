@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!--加载db.properties即数据库配置文件-->
+    <properties resource="db.properties"></properties>
+
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${db.driver}"/>
+                <property name="url" value="${db.url}"/>
+                <property name="username" value="${db.username}"/>
+                <property name="password" value="${db.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+
+    <!--加载sql操作配置文件-->
+    <mappers>
+        <mapper resource="mapper/UserMapper.xml"></mapper>
+        <mapper resource="mapper/MemberMapper.xml"></mapper>
+        <mapper resource="mapper/CardMapper.xml"></mapper>
+        <mapper resource="mapper/ProjectMapper.xml"></mapper>
+        <mapper resource="mapper/PriceMapper.xml"></mapper>
+        <mapper resource="mapper/CoachMapper.xml"></mapper>
+        <mapper resource="mapper/EquipmentMapper.xml"></mapper>
+        <mapper resource="mapper/UserSalaryMapper.xml"></mapper>
+        <mapper resource="mapper/CoachSalaryMapper.xml"></mapper>
+        <mapper resource="mapper/SalaryListMapper.xml"></mapper>
+        <mapper resource="mapper/EquipmentOrderMapper.xml"></mapper>
+        <mapper resource="mapper/MemberListMapper.xml"></mapper>
+        <mapper resource="mapper/AddMoneyListMapper.xml"></mapper>
+        <mapper resource="mapper/AddProjectListMapper.xml"></mapper>
+        <mapper resource="mapper/AdminMapper.xml"></mapper>
+    </mappers>
+
+    
+
+</configuration>

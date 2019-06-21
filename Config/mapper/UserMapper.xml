@@ -1,0 +1,119 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--通过namespace来找到指定的sql操作文件-->
+<mapper namespace="user">
+
+    <!--resultType返回值类型  parameterType参数类型  com.club.Po.User表示类型是User类-->
+    <!--查询user表所有的数据,id为UserDaoImp调用 sql语句不能用select * from user，因为在数据库中字段是下划线，java中变量是驼峰-->
+    <select id="selectAllUser" resultType="com.club.Po.User">
+
+        SELECT
+		user.`user_id` AS `userId`,
+		user.`user_pwd` AS `userPwd`,
+		user.`user_name` AS `userName`,
+		user.`user_sex` AS `userSex`,
+		user.`user_age` AS `userAge`,
+		user.`user_phone` AS `userPhone`,
+        user.`user_pic` AS `userPic`
+		FROM USER
+		LEFT JOIN user_role ON user_role.`role_id` = 2
+		WHERE user.`user_id` = user_role.`user_id`
+
+    </select>
+
+    <!--通过id查找信息-->
+    <select id="selectUserById" parameterType="int" resultType="com.club.Po.User">
+        SELECT
+		user.`user_id` AS `userId`,
+		user.`user_pwd` AS `userPwd`,
+		user.`user_name` AS `userName`,
+		user.`user_sex` AS `userSex`,
+		user.`user_age` AS `userAge`,
+		user.`user_phone` AS `userPhone`,
+        user.`user_pic` AS `userPic`
+		FROM USER
+        where user_id = #{userId};
+    </select>
+
+	<!--修改个人信息-->
+	<update id="updateUser" parameterType="com.club.Po.User">
+
+		UPDATE USER SET user_pwd=#{userPwd},user_name=#{userName},user_sex=#{userSex},user_age=#{userAge},user_phone=#{userPhone},
+		user_pic=#{userPic}
+		WHERE user_id=#{userId}
+
+	</update>
+
+	<!--插入用户-->
+	<insert id="insertUser" parameterType="com.club.Po.User">
+
+		-- 获取插入的id
+		<selectKey keyProperty="user_id" resultType="int" order="AFTER">
+			select LAST_INSERT_ID()
+		</selectKey>
+
+		insert into USER (user_name, user_sex, user_age, user_phone) values (#{userName},#{userSex},#{userAge},#{userPhone})
+
+	</insert>
+
+	<!--通过电话查找用户用来判断插入是否有效-->
+	<select id="selectUserByPhone" parameterType="String" resultType="com.club.Po.User">
+
+		SELECT
+		user.`user_id` AS `userId`,
+		user.`user_pwd` AS `userPwd`,
+		user.`user_name` AS `userName`,
+		user.`user_sex` AS `userSex`,
+		user.`user_age` AS `userAge`,
+		user.`user_phone` AS `userPhone`,
+        user.`user_pic` AS `userPic`
+		FROM USER
+		WHERE user_phone = #{userPhone}
+
+	</select>
+	<!--插入用户权限表-->
+	<insert id="insertUserRole" parameterType="com.club.Po.UserRole">
+
+		-- 获取插入的id
+		<selectKey keyProperty="id" resultType="int" order="AFTER">
+			select LAST_INSERT_ID()
+		</selectKey>
+
+		insert into user_role (user_id, role_id) values (#{userId},#{roleId})
+
+	</insert>
+
+	<!--通过user_id查找权限用来判断登录-->
+	<select id="selectRoleByUserId" parameterType="int" resultType="String">
+
+		SELECT role_name FROM
+		user_role,role
+		WHERE user_role.`user_id` = #{userId}
+		AND role.`role_id` = user_role.`role_id`
+
+	</select>
+
+	<delete id="deleteUser" parameterType="int">
+
+		DELETE FROM USER WHERE user_id = #{userId}
+
+	</delete>
+
+	<delete id="deleteUserRole" parameterType="int">
+
+		DELETE FROM user_role WHERE user_id = #{userId}
+
+	</delete>
+
+	<!--修改员工信息-->
+	<update id="editUser" parameterType="com.club.Po.User">
+
+		UPDATE USER SET user_name=#{userName},user_sex=#{userSex},user_age=#{userAge},user_phone=#{userPhone}
+		WHERE user_id=#{userId}
+
+	</update>
+
+
+</mapper>

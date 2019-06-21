@@ -1,0 +1,131 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--通过namespace来找到指定的sql操作文件-->
+<mapper namespace="coachSalary">
+
+    <!--resultType返回值类型  parameterType参数类型  com.club.Po.User表示类型是User类-->
+    <!--查询user表所有的数据,id为UserDaoImp调用 sql语句不能用select * from user，因为在数据库中字段是下划线，java中变量是驼峰-->
+    <select id="selectAllCoachSalary" resultType="com.club.Po.CoachSalary">
+
+        SELECT
+        coach_salary.`id` AS `id`,
+        coach_salary.`coach_id` AS `coachId`,
+        coach_salary.`coach_name` AS `coachName`,
+        coach_salary.`user_role` AS `userRole`,
+        coach_salary.`year` AS `year`,
+        coach_salary.`month` AS `month`,
+        coach_salary.`base_salary` AS `baseSalary`,
+        coach_salary.`cqts` AS `cqts`,
+        coach_salary.`qqts` AS `qqts`,
+        coach_salary.`over_time` AS `overTime`,
+        coach_salary.`over_salary` AS `overSalary`,
+        coach_salary.`jiangjin` AS `jiangJin`,
+        coach_salary.`yf_salary` AS `yfSalary`
+		FROM coach_salary
+
+    </select>
+
+    <select id="selectCoachSalaryById" parameterType="int" resultType="com.club.Po.CoachSalary">
+
+        SELECT
+        coach_salary.`id` AS `id`,
+        coach_salary.`coach_id` AS `coachId`,
+        coach_salary.`coach_name` AS `coachName`,
+        coach_salary.`user_role` AS `userRole`,
+        coach_salary.`year` AS `year`,
+        coach_salary.`month` AS `month`,
+        coach_salary.`base_salary` AS `baseSalary`,
+        coach_salary.`cqts` AS `cqts`,
+        coach_salary.`qqts` AS `qqts`,
+        coach_salary.`over_time` AS `overTime`,
+        coach_salary.`over_salary` AS `overSalary`,
+        coach_salary.`jiangjin` AS `jiangJin`,
+        coach_salary.`yf_salary` AS `yfSalary`
+        FROM coach_salary
+        WHERE id = #{id}
+
+    </select>
+
+    <!--修改员工信息-->
+    <update id="editCoachSalary" parameterType="com.club.Po.CoachSalary">
+
+        UPDATE coach_salary SET year=#{year},month=#{month},base_salary=#{baseSalary},cqts=#{cqts},qqts=#{qqts},over_time=#{overTime},over_salary=#{overSalary},jiangjin=#{jiangJin},yf_salary=#{yfSalary}
+        WHERE id=#{id}
+
+    </update>
+
+    <!--插入财务员工工资表-->
+    <insert id="insertCoachSalary" parameterType="com.club.Po.CoachSalary">
+
+        -- 获取插入的id
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+
+        insert into coach_salary (coach_id, coach_name, user_role, year, month, base_salary, cqts, qqts, over_time, over_salary, jiangjin, yf_salary)
+        values (#{coachId},#{coachName},#{userRole},#{year},#{month},#{baseSalary},#{cqts},#{qqts},#{overTime},#{overSalary},#{jiangJin},#{yfSalary})
+
+    </insert>
+
+    <delete id="deleteCoachSalary" parameterType="int">
+
+        DELETE FROM coach_salary WHERE id = #{id}
+
+    </delete>
+
+    <!--通过工号，年份，月份查找-->
+    <select id="selectCoachSalaryByTime" resultType="com.club.Po.CoachSalary">
+
+        SELECT
+        coach_salary.`id` AS `id`,
+        coach_salary.`coach_id` AS `coachId`,
+        coach_salary.`coach_name` AS `coachName`,
+        coach_salary.`user_role` AS `userRole`,
+        coach_salary.`year` AS `year`,
+        coach_salary.`month` AS `month`,
+        coach_salary.`base_salary` AS `baseSalary`,
+        coach_salary.`cqts` AS `cqts`,
+        coach_salary.`qqts` AS `qqts`,
+        coach_salary.`over_time` AS `overTime`,
+        coach_salary.`over_salary` AS `overSalary`,
+        coach_salary.`jiangjin` AS `jiangJin`,
+        coach_salary.`yf_salary` AS `yfSalary`
+        FROM coach_salary
+        WHERE coach_id = #{coachId}
+        AND year = #{year}
+        AND month=#{month}
+
+    </select>
+
+    <select id="selectCoachSalaryByYear" parameterType="String" resultType="com.club.Po.CoachSalary">
+
+        SELECT
+        coach_salary.`id` AS `id`,
+        coach_salary.`coach_id` AS `coachId`,
+        coach_salary.`coach_name` AS `coachName`,
+        coach_salary.`user_role` AS `userRole`,
+        coach_salary.`year` AS `year`,
+        coach_salary.`month` AS `month`,
+        coach_salary.`base_salary` AS `baseSalary`,
+        coach_salary.`cqts` AS `cqts`,
+        coach_salary.`qqts` AS `qqts`,
+        coach_salary.`over_time` AS `overTime`,
+        coach_salary.`over_salary` AS `overSalary`,
+        coach_salary.`jiangjin` AS `jiangJin`,
+        coach_salary.`yf_salary` AS `yfSalary`
+        FROM coach_salary
+        WHERE year = #{year}
+
+    </select>
+
+
+    <select id="selectNumber" resultType="int">
+        select distinct coach_id from coach_salary
+    </select>
+
+
+
+
+</mapper>

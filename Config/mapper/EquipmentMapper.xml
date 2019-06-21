@@ -1,0 +1,71 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--通过namespace来找到指定的sql操作文件-->
+<mapper namespace="equipment">
+
+    <!--resultType返回值类型  parameterType参数类型  com.club.Po.User表示类型是User类-->
+    <!--查询user表所有的数据,id为UserDaoImp调用 sql语句不能用select * from user，因为在数据库中字段是下划线，java中变量是驼峰-->
+    <select id="selectAllEquipment" resultType="com.club.Po.Equipment">
+
+        SELECT
+        equipment.`equ_id` AS `equId`,
+        equipment.`equ_name` AS `equName`,
+		equipment.`equ_number` AS `equNumber`,
+		equipment.`equ_type` AS `equType`
+		FROM equipment
+
+    </select>
+
+    <insert id="insertEquipment" parameterType="com.club.Po.Equipment">
+
+        -- 获取插入的id
+        <selectKey keyProperty="equ_id" resultType="int" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+
+        insert into equipment (equ_name, equ_number, equ_type) values (#{equName},#{equNumber},#{equType})
+
+    </insert>
+
+    <delete id="deleteEquipment" parameterType="int">
+
+        DELETE FROM equipment WHERE equ_id = #{equId}
+
+    </delete>
+
+    <!--通过id更新余额-->
+    <update id="updateEquipment" parameterType="com.club.Po.Equipment">
+
+        UPDATE equipment SET equ_name=#{equName},equ_number=#{equNumber},equ_type=#{equType} WHERE equ_id=#{equId}
+
+    </update>
+
+    <select id="selectEquipmentByName" parameterType="String" resultType="com.club.Po.Equipment">
+
+        SELECT
+        equipment.`equ_id` AS `equId`,
+        equipment.`equ_name` AS `equName`,
+        equipment.`equ_number` AS `equNumber`,
+        equipment.`equ_type` AS `equType`
+        FROM equipment
+        WHERE equ_name=#{equName}
+
+    </select>
+
+    <select id="selectEquipmentById" parameterType="int" resultType="com.club.Po.Equipment">
+
+        SELECT
+        equipment.`equ_id` AS `equId`,
+        equipment.`equ_name` AS `equName`,
+        equipment.`equ_number` AS `equNumber`,
+        equipment.`equ_type` AS `equType`
+        FROM equipment
+        WHERE equ_id=#{equId}
+
+    </select>
+
+
+
+</mapper>

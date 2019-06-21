@@ -1,0 +1,90 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--通过namespace来找到指定的sql操作文件-->
+<mapper namespace="coach">
+
+    <!--resultType返回值类型  parameterType参数类型  com.club.Po.User表示类型是User类-->
+    <!--查询user表所有的数据,id为UserDaoImp调用 sql语句不能用select * from user，因为在数据库中字段是下划线，java中变量是驼峰-->
+    <select id="selectAllCoach" resultType="com.club.Po.Coach">
+
+        SELECT
+        coach.`coach_id` AS `coachId`,
+		coach.`coach_name` AS `coachName`,
+		coach.`coach_sex` AS `coachSex`,
+		coach.`coach_age` AS `coachAge`,
+		coach.`coach_edu` AS `coachEdu`,
+		coach.`coach_exp` AS `coachExp`,
+		coach.`coach_cert` AS `coachCert`,
+		coach.`coach_adv` AS `coachAdv`,
+		coach.`coach_motto` AS `coachMotto`,
+		coach.`coach_phone` AS `coachPhone`,
+		coach.`coach_pic` AS `coachPic`
+		FROM coach
+
+    </select>
+
+    <select id="selectCoachById" parameterType="int" resultType="com.club.Po.Coach">
+
+        SELECT
+        coach.`coach_id` AS `coachId`,
+		coach.`coach_name` AS `coachName`,
+		coach.`coach_sex` AS `coachSex`,
+		coach.`coach_age` AS `coachAge`,
+		coach.`coach_edu` AS `coachEdu`,
+		coach.`coach_exp` AS `coachExp`,
+		coach.`coach_cert` AS `coachCert`,
+		coach.`coach_adv` AS `coachAdv`,
+		coach.`coach_motto` AS `coachMotto`,
+		coach.`coach_phone` AS `coachPhone`,
+		coach.`coach_pic` AS `coachPic`
+		FROM coach
+		WHERE coach_id = #{coachId}
+
+    </select>
+
+    <select id="selectCoachByPhone" parameterType="String" resultType="com.club.Po.Coach">
+
+        SELECT
+        coach.`coach_id` AS `coachId`,
+        coach.`coach_name` AS `coachName`,
+        coach.`coach_sex` AS `coachSex`,
+        coach.`coach_age` AS `coachAge`,
+        coach.`coach_edu` AS `coachEdu`,
+        coach.`coach_exp` AS `coachExp`,
+        coach.`coach_cert` AS `coachCert`,
+        coach.`coach_adv` AS `coachAdv`,
+        coach.`coach_motto` AS `coachMotto`,
+        coach.`coach_phone` AS `coachPhone`,
+        coach.`coach_pic` AS `coachPic`
+        FROM coach
+        WHERE coach_phone = #{coachPhone}
+
+    </select>
+
+    <update id="updateCoach" parameterType="com.club.Po.Coach">
+
+        UPDATE coach SET coach_name=#{coachName},coach_sex=#{coachSex},coach_age=#{coachAge},coach_edu=#{coachEdu},coach_exp=#{coachExp},coach_cert=#{coachCert},coach_adv=#{coachAdv},coach_motto=#{coachMotto},coach_phone=#{coachPhone},coach_pic=#{coachPic}
+         WHERE coach_id=#{coachId}
+
+    </update>
+
+    <delete id="deleteCoach" parameterType="int">
+        DELETE FROM coach WHERE coach_id = #{coachId}
+    </delete>
+
+    <insert id="insertCoach" parameterType="com.club.Po.Coach">
+        -- 获取插入的id
+        <selectKey keyProperty="coach_id" resultType="int" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+
+        insert into coach (coach_name, coach_sex, coach_age, coach_edu, coach_exp, coach_cert, coach_adv, coach_motto, coach_phone, coach_pic)
+        values (#{coachName},#{coachSex},#{coachAge},#{coachEdu},#{coachExp},#{coachCert},#{coachAdv},#{coachMotto},#{coachPhone},#{coachPic})
+
+    </insert>
+
+
+
+</mapper>

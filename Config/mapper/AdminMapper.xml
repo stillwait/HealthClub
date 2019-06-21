@@ -1,0 +1,48 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--通过namespace来找到指定的sql操作文件-->
+<mapper namespace="admin">
+
+    <!--通过id查找信息-->
+    <select id="selectAdminById" parameterType="int" resultType="com.club.Po.Admin">
+        SELECT
+		admin.`admin_id` AS `adminId`,
+		admin.`admin_pwd` AS `userPwd`,
+		admin.`admin_name` AS `adminName`,
+		admin.`admin_sex` AS `adminSex`,
+		admin.`admin_age` AS `adminAge`,
+		admin.`admin_phone` AS `adminPhone`,
+        admin.`admin_pic` AS `adminPic`
+		FROM admin
+        where admin_id = #{adminId};
+    </select>
+
+	<!--修改个人信息-->
+	<update id="updateAdmin" parameterType="com.club.Po.Admin">
+
+		UPDATE admin SET admin_pwd=#{adminPwd},admin_name=#{adminName},admin_sex=#{adminSex},admin_age=#{adminAge},admin_phone=#{adminPhone},
+		admin_pic=#{adminPic}
+		WHERE admin_id=#{adminId}
+
+	</update>
+
+	<!--通过电话查找管理员用来判断插入是否有效-->
+	<select id="selectAdminByPhone" parameterType="String" resultType="com.club.Po.Admin">
+
+		SELECT
+		admin.`admin_id` AS `adminId`,
+		admin.`admin_pwd` AS `adminPwd`,
+		admin.`admin_name` AS `adminName`,
+		admin.`admin_sex` AS `adminSex`,
+		admin.`admin_age` AS `adminAge`,
+		admin.`admin_phone` AS `adminPhone`,
+        admin.`admin_pic` AS `adminPic`
+		FROM admin
+		WHERE admin_phone = #{adminPhone}
+
+	</select>
+
+
+</mapper>

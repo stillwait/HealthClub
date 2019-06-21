@@ -1,0 +1,146 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--通过namespace来找到指定的sql操作文件-->
+<mapper namespace="project">
+
+    <!--resultType返回值类型  parameterType参数类型  com.club.Po.User表示类型是User类-->
+    <!--查询健身项目表所有的数据,-->
+    <select id="selectAllProject" resultType="com.club.Po.Project">
+
+        SELECT
+        project.`pro_id` AS `proId`,
+        project.`pro_name` AS `proName`,
+        project.`pro_describe` AS `proDescribe`,
+        project.`pro_date` AS `proDate`
+        FROM project
+
+    </select>
+
+    <!--查询一个会员的信息以及会员卡和健身课程-->
+    <resultMap id="proPriceInfoMap" type="com.club.Po.ProjectPrice">
+
+        <id column="pro_id" property="proId"></id>
+        <result column="pro_name" property="proName"></result>
+        <result column="pro_date" property="proDate"></result>
+
+        <collection property="price" ofType="com.club.Po.Price">
+            <id column="price_id" property="priceId"></id>
+            <result column="price_name" property="priceName"></result>
+            <result column="price_money" property="priceMoney"></result>
+        </collection>
+
+    </resultMap>
+
+    <select id="selectProPriceInfo" parameterType="int" resultMap="proPriceInfoMap">
+
+        SELECT
+        project.`pro_id`,
+        project.`pro_name`,
+        project.`pro_date`,
+        price.`price_id`,
+        price.`price_name`,
+        price.`price_money`
+        FROM project
+        LEFT JOIN pro_price ON pro_price.`pro_id` = #{proId}
+        LEFT JOIN price ON price.`price_id` = pro_price.`price_id`
+        WHERE project.`pro_id` = #{proId}
+
+    </select>
+
+    <!--//删除健身项目-->
+    <delete id="deleteProject" parameterType="int">
+
+        DELETE FROM project WHERE pro_id = #{proId};
+        DELETE FROM pro_price WHERE pro_id = #{proId};
+        DELETE FROM mem_project WHERE pro_id = #{proId};
+
+    </delete>
+
+    <!--插入项目-->
+    <insert id="insertProject" parameterType="com.club.Po.Project">
+
+        -- 获取插入的id
+        <selectKey keyProperty="pro_id" resultType="int" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+
+        insert into project (pro_name, pro_describe, pro_date) values (#{proName},#{proDescribe},#{proDate})
+    </insert>
+
+    <!--插入项目价格-->
+    <insert id="insertProjectPrice" parameterType="com.club.Po.ProPrice">
+
+        -- 获取插入的id
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+
+        insert into pro_price (pro_id, price_id) values (#{proId},#{priceId})
+    </insert>
+
+    <select id="selectProjectByName" parameterType="String" resultType="com.club.Po.Project">
+        SELECT
+        project.`pro_id` AS `proId`,
+        project.`pro_name` AS `proName`,
+        project.`pro_describe` AS `proDescribe`,
+        project.`pro_date` AS `proDate`
+        FROM project
+        WHERE pro_name=#{proName}
+    </select>
+
+    <select id="selectProjectById" parameterType="int" resultType="com.club.Po.Project">
+        SELECT
+        project.`pro_id` AS `proId`,
+        project.`pro_name` AS `proName`,
+        project.`pro_describe` AS `proDescribe`,
+        project.`pro_date` AS `proDate`
+        FROM project
+        WHERE pro_id=#{proId}
+    </select>
+
+    <!--修改项目-->
+    <update id="updateProject" parameterType="com.club.Po.Project">
+
+        UPDATE project SET pro_name=#{proName},pro_describe=#{proDescribe},pro_date=#{proDate}
+        WHERE pro_id=#{proId}
+
+    </update>
+
+    <!--修改项目价格-->
+    <update id="updateProjectPrice" parameterType="com.club.Po.ProPrice">
+
+        UPDATE pro_price SET pro_id=#{proId},price_id=#{priceId}
+        WHERE pro_id=#{proId}
+        AND price_id=#{priceId}
+
+    </update>
+
+    <select id="selectProPriceByTwoId" resultType="com.club.Po.ProPrice">
+        SELECT
+        pro_price.`id` AS `id`,
+        pro_price.`pro_id` AS `proId`,
+        pro_price.`price_id` AS `priceId`
+        from pro_price
+        WHERE pro_id = #{proId}
+        AND price_id = #{priceId}
+    </select>
+
+
+    <!--//删除健身项目关联-->
+    <delete id="deletePriceById">
+
+        DELETE FROM pro_price WHERE pro_id = #{proId} AND price_id = #{priceId}
+
+    </delete>
+
+    <select id="selectProCoach" parameterType="int" resultType="String">
+
+        SELECT coach_name
+        from coach
+        where coach.`coach_id` = any(select coach_id from pro_coa WHERE pro_id=#{proId})
+
+    </select>
+
+</mapper>

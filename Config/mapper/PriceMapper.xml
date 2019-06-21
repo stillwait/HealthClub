@@ -1,0 +1,68 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--通过namespace来找到指定的sql操作文件-->
+<mapper namespace="price">
+
+    <!--resultType返回值类型  parameterType参数类型  com.club.Po.User表示类型是User类-->
+    <!--查询user表所有的数据,id为UserDaoImp调用 sql语句不能用select * from user，因为在数据库中字段是下划线，java中变量是驼峰-->
+    <select id="selectAllPrice" resultType="com.club.Po.Price">
+
+        SELECT
+        price.`price_id` AS `priceId`,
+        price.`price_name` AS `priceName`,
+        price.`price_money` AS `priceMoney`
+        FROM price
+
+    </select>
+
+    <select id="selectPriceById" resultType="com.club.Po.Price">
+
+        SELECT
+        price.`price_id` AS `priceId`,
+        price.`price_name` AS `priceName`,
+        price.`price_money` AS `priceMoney`
+        FROM price
+        WHERE price_id=#{priceId}
+
+    </select>
+
+    <update id="updatePrice" parameterType="com.club.Po.Price">
+
+        UPDATE price SET price_name=#{priceName},price_money=#{priceMoney}
+        WHERE price_id=#{priceId}
+
+    </update>
+
+    <delete id="deletePrice" parameterType="int">
+        DELETE FROM price WHERE price_id = #{priceId}
+    </delete>
+
+    <insert id="insertPrice" parameterType="com.club.Po.Price">
+
+        -- 获取插入的id
+        <selectKey keyProperty="price_id" resultType="int" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+
+        insert into price (price_name, price_money)
+        values (#{priceName},#{priceMoney})
+
+    </insert>
+
+    <select id="selectPriceByName" resultType="com.club.Po.Price">
+
+        SELECT
+        price.`price_id` AS `priceId`,
+        price.`price_name` AS `priceName`,
+        price.`price_money` AS `priceMoney`
+        FROM price
+        WHERE price_name=#{priceName}
+        AND price_money=#{priceMoney}
+
+    </select>
+
+
+
+</mapper>

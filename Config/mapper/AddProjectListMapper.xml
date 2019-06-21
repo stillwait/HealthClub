@@ -1,0 +1,44 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--通过namespace来找到指定的sql操作文件-->
+<mapper namespace="addProjectList">
+
+    <!--resultType返回值类型  parameterType参数类型  com.club.Po.User表示类型是User类-->
+    <!--查询user表所有的数据,id为UserDaoImp调用 sql语句不能用select * from user，因为在数据库中字段是下划线，java中变量是驼峰-->
+    <select id="selectAllList" resultType="com.club.Po.AddProjectList">
+
+        SELECT
+        addproject_list.`id` AS `id`,
+        addproject_list.`mem_id` AS `memId`,
+		addproject_list.`mem_name` AS `memName`,
+		addproject_list.`pro_name` AS `proName`,
+		addproject_list.`pro_time` AS `proTime`,
+		addproject_list.`pro_price` AS `proPrice`,
+		addproject_list.`date` AS `date`
+		FROM addproject_list
+
+    </select>
+
+    <insert id="insertProjectList" parameterType="com.club.Po.AddProjectList">
+        -- 获取插入的id
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+
+        insert into addproject_list (mem_id, mem_name, pro_name, pro_time, pro_price, date)
+        values (#{memId},#{memName},#{proName},#{proTime},#{proPrice},#{date})
+
+    </insert>
+
+    <delete id="deleteProjectList" parameterType="int">
+
+        DELETE FROM addproject_list WHERE id=#{id}
+
+    </delete>
+
+
+
+
+</mapper>

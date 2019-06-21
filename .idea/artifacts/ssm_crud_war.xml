@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="ssm-crud:war">
+    <output-path>F:/项目/解压后/ssm-crud-master/target</output-path>
+    <root id="archive" name="ssm-crud.war">
+      <element id="artifact" artifact-name="ssm-crud:war exploded" />
+    </root>
+  </artifact>
+</component>

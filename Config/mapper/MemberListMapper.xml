@@ -1,0 +1,41 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--通过namespace来找到指定的sql操作文件-->
+<mapper namespace="memberList">
+
+    <select id="selectAllList" resultType="com.club.Po.MemberList">
+
+        SELECT
+        member_list.`id` AS `id`,
+        member_list.`mem_id` AS `memId`,
+        member_list.`mem_name` AS `memName`,
+        member_list.`card_name` AS `cardName`,
+        member_list.`card_price` AS `cardPrice`,
+        member_list.`mem_date` AS `memDate`
+        FROM member_list
+
+    </select>
+
+    <insert id="insertMemberList" parameterType="com.club.Po.MemberList">
+        -- 获取插入的id
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+
+        insert into member_list (mem_id, mem_name, card_name, card_price, mem_date)
+        values (#{memId},#{memName},#{cardName},#{cardPrice},#{memDate})
+
+    </insert>
+
+    <delete id="deleteMoneyList" parameterType="int">
+
+        DELETE FROM member_list WHERE id=#{id}
+
+    </delete>
+
+
+
+
+</mapper>

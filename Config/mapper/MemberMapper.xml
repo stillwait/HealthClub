@@ -1,0 +1,272 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--通过namespace来找到指定的sql操作文件-->
+<mapper namespace="member">
+
+    <!--resultType返回值类型  parameterType参数类型  com.club.Po.User表示类型是User类-->
+    <!--查询user表所有的数据,id为UserDaoImp调用 sql语句不能用select * from user，因为在数据库中字段是下划线，java中变量是驼峰-->
+    <select id="selectAllMember" resultType="com.club.Po.Member">
+
+        SELECT
+		member.`mem_id` AS `memId`,
+		member.`mem_name` AS `memName`,
+		member.`mem_pwd` AS `memPwd`,
+		member.`mem_sex` AS `memSex`,
+		member.`mem_age` AS `memAge`,
+		member.`mem_phone` AS `memPhone`,
+		member.`mem_date` AS `memDate`,
+		member.`mem_money` AS `memMoney`,
+		member.`mem_pic` AS `memPic`
+		FROM member
+
+    </select>
+
+	<!--通过id查询余额-->
+	<select id="selectMoneyById" parameterType="int" resultType="float">
+
+		SELECT mem_money FROM member WHERE mem_id=#{memId}
+
+	</select>
+
+	<!--通过id更新余额-->
+	<update id="updateMemMoney" parameterType="com.club.Po.Member">
+
+		UPDATE member SET mem_money=#{memMoney} WHERE mem_id=#{memId}
+
+	</update>
+
+	<!--添加会员-->
+	<insert id="insertMember" parameterType="com.club.Po.Member">
+
+		-- 获取插入的id
+		<selectKey keyProperty="mem_id" resultType="int" order="AFTER">
+			select LAST_INSERT_ID()
+		</selectKey>
+
+		insert into member (mem_name, mem_pwd, mem_sex, mem_age, mem_phone, mem_date, mem_money) values (#{memName},#{memPwd},#{memSex},#{memAge},#{memPhone},#{memDate},#{memMoney})
+
+	</insert>
+
+	<!--//删除会员-->
+	<delete id="deleteMember" parameterType="int">
+
+		DELETE FROM member WHERE mem_id = #{memId};
+		DELETE FROM mem_card WHERE mem_id = #{memId};
+		DELETE FROM mem_project WHERE mem_id = #{memId};
+
+	</delete>
+
+	<!--查询一个会员的信息以及会员卡和健身课程-->
+	<resultMap id="MemberInfoMap" type="com.club.Po.MemberCardPro">
+
+		<id column="mem_id" property="memId"></id>
+		<result column="mem_name" property="memName"></result>
+		<result column="mem_pwd" property="memPwd"></result>
+		<result column="mem_sex" property="memSex"></result>
+		<result column="mem_age" property="memAge"></result>
+		<result column="mem_phone" property="memPhone"></result>
+		<result column="mem_date" property="memDate"></result>
+		<result column="mem_money" property="memMoney"></result>
+		<result column="mem_pic" property="memPic"></result>
+
+		<association property="card" javaType="com.club.Po.Card">
+			<id column="card_id" property="cardId"></id>
+			<result column="card_name" property="cardName"></result>
+			<result column="card_benefit" property="cardBenefit"></result>
+		</association>
+		<collection property="project" ofType="com.club.Po.Project">
+			<result column="pro_name" property="proName"></result>
+			<result column="pro_date" property="proDate"></result>
+		</collection>
+
+	</resultMap>
+
+	<select id="selectTheMemberInfo" parameterType="int" resultMap="MemberInfoMap">
+
+		SELECT
+		member.`mem_id`,
+		member.`mem_name`,
+		member.`mem_pwd`,
+		member.`mem_sex`,
+		member.`mem_age`,
+		member.`mem_phone`,
+		member.`mem_date`,
+		member.`mem_money`,
+		member.`mem_pic`,
+		card.`card_id`,
+		card.`card_name`,
+		card.`card_benefit`,
+		project.`pro_name`,
+		project.`pro_date`
+		FROM member
+		LEFT JOIN mem_card ON mem_card.`mem_id` = #{memId}
+		LEFT JOIN mem_project ON mem_project.`mem_id` = #{memId}
+		LEFT JOIN card ON card.`card_id` = mem_card.`card_id`
+		LEFT JOIN project ON project.`pro_id` = mem_project.`pro_id`
+		WHERE member.`mem_id` = #{memId}
+
+
+	</select>
+
+	<!--通过电话号码查询会员用于判断，插入会员时避免重复-->
+	<select id="selectMemberByPhone" parameterType="String" resultType="com.club.Po.Member">
+
+		SELECT
+		member.`mem_id` AS `memId`,
+		member.`mem_name` AS `memName`,
+		member.`mem_pwd` AS `memPwd`,
+		member.`mem_sex` AS `memSex`,
+		member.`mem_age` AS `memAge`,
+		member.`mem_phone` AS `memPhone`,
+		member.`mem_date` AS `memDate`,
+		member.`mem_money` AS `memMoney`,
+		member.`mem_pic` AS `memPic`
+		FROM member
+		WHERE mem_phone = #{memPhone}
+
+	</select>
+
+	<!--通过电话号码查询会员用于判断，插入会员时避免重复-->
+	<select id="selectMemberById" parameterType="int" resultType="com.club.Po.Member">
+
+		SELECT
+		member.`mem_id` AS `memId`,
+		member.`mem_name` AS `memName`,
+		member.`mem_pwd` AS `memPwd`,
+		member.`mem_sex` AS `memSex`,
+		member.`mem_age` AS `memAge`,
+		member.`mem_phone` AS `memPhone`,
+		member.`mem_date` AS `memDate`,
+		member.`mem_money` AS `memMoney`,
+		member.`mem_pic` AS `memPic`
+		FROM member
+		WHERE mem_id = #{memId}
+
+	</select>
+
+	<!--通过电话号码查询会员id用于插入mem_card-->
+	<select id="selectMemIdByPhone" parameterType="String" resultType="int">
+
+		SELECT
+		member.`mem_id` AS `memId`
+		FROM member
+		WHERE mem_phone = #{memPhone}
+
+	</select>
+
+	<!--管理员修改会员-->
+	<update id="updateMember" parameterType="com.club.Po.Member">
+
+		UPDATE member SET mem_name=#{memName},mem_pwd=#{memPwd},mem_sex=#{memSex},mem_age=#{memAge},mem_phone=#{memPhone},mem_date=#{memDate}
+		WHERE mem_id=#{memId}
+
+	</update>
+
+	<!--会员修改会员-->
+	<update id="updateMemberInfo" parameterType="com.club.Po.Member">
+
+		UPDATE member SET mem_name=#{memName},mem_pwd=#{memPwd},mem_sex=#{memSex},mem_age=#{memAge},mem_phone=#{memPhone},mem_pic=#{memPic}
+		WHERE mem_id=#{memId}
+
+	</update>
+
+	<!--管理员修改会员卡-->
+	<update id="updateMemberCard" parameterType="com.club.Po.Member">
+
+		UPDATE mem_card SET card_id=#{cardId}
+		WHERE mem_id=#{memId}
+
+	</update>
+
+	<!--添加会员与会员卡-->
+	<insert id="insertMemCard" parameterType="com.club.Po.MemCard">
+
+		-- 获取插入的id
+		<selectKey keyProperty="id" resultType="int" order="AFTER">
+			select LAST_INSERT_ID()
+		</selectKey>
+
+		insert into mem_card (mem_id, card_id) values (#{memId},#{cardId})
+
+	</insert>
+
+	<!--通过会员卡id查询价格-->
+	<select id="selectPriceById" parameterType="int" resultType="float">
+
+		SELECT
+		card.`card_price` AS `cardPrice`
+		FROM card
+		WHERE card_id = #{cardId}
+
+	</select>
+
+	<!--会员办理健身项目，显示办理记录-->
+	<resultMap id="MemberProInfoMap" type="com.club.Po.MemProRecord">
+		<id column="id" property="id"></id>
+		<result column="mem_id" property="memId"></result>
+		<result column="pro_id" property="proId"></result>
+		<result column="pro_date" property="proDate"></result>
+		<result column="real_money" property="realMoney"></result>
+
+		<association property="project" javaType="com.club.Po.Project">
+			<result column="pro_name" property="proName"></result>
+		</association>
+
+		<association property="price" javaType="com.club.Po.Price">
+			<result column="price_name" property="priceName"></result>
+			<result column="price_money" property="priceMoney"></result>
+		</association>
+
+		<collection property="members" ofType="com.club.Po.Member">
+			<result column="mem_name" property="memName"></result>
+			<result column="mem_money" property="memMoney"></result>
+
+		</collection>
+
+	</resultMap>
+
+	<select id="selectMemberProInfo" parameterType="int" resultMap="MemberProInfoMap">
+
+		SELECT
+		mem_project.`id`,
+		mem_project.`mem_id`,
+		member.`mem_name`,
+		member.`mem_pwd`,
+		mem_project.`pro_id`,
+		project.`pro_name`,
+		price.`price_name`,
+		price.`price_money`,
+		mem_project.`real_money`,
+		member.`mem_money`,
+		mem_project.`pro_date`
+		FROM mem_project
+		LEFT JOIN member ON member.`mem_id` = #{memId}
+		LEFT JOIN project ON project.`pro_id` = mem_project.`pro_id`
+		LEFT JOIN price ON price.`price_id` = mem_project.`price_id`
+		WHERE mem_project.`mem_id` = #{memId}
+
+
+	</select>
+
+	<!--添加会员健身项目-->
+	<insert id="insertMemProject" parameterType="com.club.Po.MemProject">
+
+		-- 获取插入的id
+		<selectKey keyProperty="id" resultType="int" order="AFTER">
+			select LAST_INSERT_ID()
+		</selectKey>
+
+		insert into mem_project (mem_id, pro_id, price_id, pro_date, real_money) values (#{memId},#{proId},#{priceId},#{proDate},#{realMoney})
+
+	</insert>
+
+	<!--删除会员健身项目-->
+	<delete id="deleteMemProject" parameterType="int">
+
+		DELETE FROM mem_project WHERE id = #{id};
+
+	</delete>
+
+</mapper>
